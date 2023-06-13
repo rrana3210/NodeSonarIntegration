@@ -1,0 +1,35 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarqube-analysis:
+    runs-on: centos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run SonarQube analysis
+        uses: SonarSource/sonarqube-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=NodeSonarIntegration
+            -Dsonar.projectName=Testing_Node_Integration
+            -Dsonar.projectVersion=1.0.1
+            -Dsonar.sources=.
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.exclusions=node_modules/**/*,coverage/**/*
